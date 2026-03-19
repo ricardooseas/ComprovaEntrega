@@ -37,9 +37,7 @@ As funcionalidades principais foram levantadas baseadas em requisitos funcionais
 - [x] Captura de geolocalização exata no momento da entrega via GPS do Android.
 - [x] Visualização em mapa da coordenada registrada.
 - [x] Interface moderna com Jetpack Compose e Material Design.
-- [ ] **Armazenamento definitivo de dados** *(Em andamento)* 🚧
-- [ ] **Notificações Push (Conclusão de entrega)** *(Em andamento)* 🚧
-- [ ] **Testes unitários e de UI estruturados** *(Em andamento)* 🚧
+- [x] Persistência de dados com SQLite
 
 ---
 
