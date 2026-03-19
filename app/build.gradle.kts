@@ -1,11 +1,13 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.google.ksp)
+    alias(libs.plugins.kotlin.android)
 }
 
 android {
     namespace = "com.unifor.comprovaentrega"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.unifor.comprovaentrega"
@@ -32,14 +34,11 @@ android {
         targetCompatibility = JavaVersion.VERSION_11
     }
 
-    kotlin {
-        compilerOptions {
-            jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_11)
-        }
-    }
-
     buildFeatures {
         compose = true
+    }
+    kotlinOptions {
+        jvmTarget = "11"
     }
 }
 
@@ -54,11 +53,23 @@ dependencies {
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.material3)
 
-    // Localização (GPS)
-    implementation("com.google.android.gms:play-services-location:21.0.1")
+    implementation("io.coil-kt:coil-compose:2.6.0")
 
-    // 🔥 OPEN STREET MAPS (OSMDroid) - FUNCIONA SEM API KEY
+    implementation("androidx.compose.material:material-icons-extended")
+
+    // Localização (GPS)
+    implementation(libs.play.location)
+
+    // OPEN STREET MAPS
     implementation("org.osmdroid:osmdroid-android:6.1.18")
+
+    // Room
+    implementation(libs.room.runtime)
+    implementation(libs.room.ktx)
+    implementation(libs.core.ktx)
+    implementation(libs.androidx.compose.runtime)
+    implementation(libs.androidx.material3)
+    ksp(libs.room.compiler)
 
     // Testes
     testImplementation(libs.junit)

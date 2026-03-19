@@ -1,19 +1,29 @@
-package com.unifor.comprovaentrega
+package com.unifor.comprovaentrega.ui.home
 
+import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
+import com.unifor.comprovaentrega.data.local.entity.Delivery
+import kotlinx.coroutines.launch
 import org.osmdroid.config.Configuration
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapView
@@ -29,10 +39,46 @@ fun HomeScreen(
     onNovaEntregaClick: () -> Unit = {},
     onEntregaClick: (Delivery) -> Unit = {}
 ) {
+    var mostrarDialogSobre by remember { mutableStateOf(false) }
+
+    if (mostrarDialogSobre) {
+        AlertDialog(
+            onDismissRequest = {
+                mostrarDialogSobre = false
+            },
+            title = { Text("Sobre") },
+            text = {
+                Column {
+                    Text("N700 Desenvolvimento para Plataformas Móveis", style = MaterialTheme.typography.headlineSmall)
+                    Text("Desenvolvido pelo grupo 20:")
+                    Text("# 2425059 - Arimateia Barbosa")
+                    Text("# 2425262 - Ricardo Oseas")
+                    Text("# 2416703 - Alberto Luiz")
+                    Text("# 2631611 - Pedro Gabriel")
+                }
+            },
+            confirmButton = {
+                Button(
+                    onClick = { mostrarDialogSobre = false },
+                ) {
+                    Text("Ok")
+                }
+            }
+        )
+    }
+
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(text = "ComprovaEntrega") },
+                title = { Text(text = "Comprova Entrega") },
+                actions = {
+                    IconButton(onClick = { mostrarDialogSobre = true }) {
+                        Icon(
+                            imageVector = Icons.Outlined.Info,
+                            contentDescription = "Sobre"
+                        )
+                    }
+                },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.surface
                 )
@@ -69,11 +115,18 @@ fun HomeScreen(
                 contentPadding = PaddingValues(16.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                items(entregas) { entrega ->
-                    DeliveryCard(
-                        entrega = entrega,
-                        onClick = { onEntregaClick(entrega) }
-                    )
+                items(
+                    items = entregas,
+                    key = { it.id }
+                ) { entrega ->
+                    Box(
+                        modifier = Modifier.animateItem()
+                    ) {
+                        DeliveryCard(
+                            entrega = entrega,
+                            onClick = { onEntregaClick(entrega) }
+                        )
+                    }
                 }
             }
         }
@@ -87,7 +140,6 @@ private fun DeliveryCard(
 ) {
     val context = LocalContext.current
 
-    // Configuração obrigatória para o mapa gratuito carregar
     Configuration.getInstance().userAgentValue = context.packageName
 
     Card(
@@ -147,7 +199,7 @@ private fun DeliveryCard(
                             MapView(ctx).apply {
                                 setMultiTouchControls(false) // Desativa gestos para não travar o scroll da lista
                                 controller.setZoom(16.0)
-                                val geoPoint = GeoPoint(entrega.latitude!!, entrega.longitude!!)
+                                val geoPoint = GeoPoint(entrega.latitude, entrega.longitude)
                                 controller.setCenter(geoPoint)
 
                                 val marker = Marker(this)
@@ -161,36 +213,7 @@ private fun DeliveryCard(
                     )
                 }
             }
-
-            // --- INDICADORES DE STATUS (SEM EMOJIS) ---
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
-                StatusIndicator(label = "Foto", isOk = entrega.photoPath != null)
-                StatusIndicator(label = "Localização", isOk = entrega.latitude != null)
-            }
         }
-    }
-}
-
-@Composable
-private fun StatusIndicator(label: String, isOk: Boolean) {
-    val color = if (isOk) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error
-    val statusText = if (isOk) "OK" else "Pendente"
-
-    Row(verticalAlignment = Alignment.CenterVertically) {
-        Text(
-            text = "$label: ",
-            style = MaterialTheme.typography.labelMedium,
-            fontWeight = FontWeight.SemiBold
-        )
-        Text(
-            text = statusText,
-            style = MaterialTheme.typography.labelMedium,
-            color = color,
-            fontWeight = FontWeight.Bold
-        )
     }
 }
 
