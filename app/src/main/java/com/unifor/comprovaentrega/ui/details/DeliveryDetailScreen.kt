@@ -8,7 +8,6 @@ import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -193,23 +192,17 @@ fun DeliveryDetailScreen(
             ) {
                 Column(modifier = Modifier.padding(16.dp)) {
                     Text("Foto de Comprovação:", style = MaterialTheme.typography.titleMedium)
-                    if (delivery.photoPath != null) {
-                        AsyncImage(
-                            model = delivery.photoPath,
-                            contentDescription = "Foto da entrega",
-                            modifier = Modifier
-                                .fillMaxWidth(),
-                            contentScale = ContentScale.FillWidth
-                        )
-                    } else {
-                        Text("Nenhuma foto anexada", color = Color.Gray)
-                    }
+                    AsyncImage(
+                        model = delivery.photoPath,
+                        contentDescription = "Foto da entrega",
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        contentScale = ContentScale.FillWidth
+                    )
                 }
             }
 
             Spacer(modifier = Modifier.height(16.dp))
-
-            val context = LocalContext.current
 
             Card(
                 modifier = Modifier.fillMaxWidth(),
