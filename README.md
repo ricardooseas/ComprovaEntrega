@@ -52,7 +52,7 @@ A etapa inicial do projeto contou com o levantamento de requisitos e a prototipa
 1. Certifique-se de ter o **Android Studio** instalado (versões recentes recomendadas).
 2. Clone este repositório em sua máquina:
    ```bash
-   git clone https://github.com/SEU_USUARIO/ComprovaEntrega.git
+   git clone https://github.com/ricardooseas/ComprovaEntrega.git
    ```
 3. Abra a pasta do projeto clonada no Android Studio.
 4. Aguarde o **Gradle** sincronizar todas as dependências (`androidx.compose`, `play-services-location`, `osmdroid`, etc).
