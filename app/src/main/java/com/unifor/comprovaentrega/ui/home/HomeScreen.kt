@@ -1,6 +1,11 @@
 package com.unifor.comprovaentrega.ui.home
 
 import android.widget.Toast
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -17,6 +22,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -49,7 +55,10 @@ fun HomeScreen(
             title = { Text("Sobre") },
             text = {
                 Column {
-                    Text("N700 Desenvolvimento para Plataformas Móveis", style = MaterialTheme.typography.headlineSmall)
+                    Text(
+                        "N700 Desenvolvimento para Plataformas Móveis",
+                        style = MaterialTheme.typography.headlineSmall
+                    )
                     Text("Desenvolvido pelo grupo 20:")
                     Text("# 2425059 - Arimateia Barbosa")
                     Text("# 2425262 - Ricardo Oseas")
@@ -94,34 +103,35 @@ fun HomeScreen(
             }
         }
     ) { padding ->
-        if (entregas.isEmpty()) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(padding),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = "Nenhuma entrega registrada",
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
-        } else {
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(padding),
-                contentPadding = PaddingValues(16.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                items(
-                    items = entregas,
-                    key = { it.id }
-                ) { entrega ->
-                    Box(
-                        modifier = Modifier.animateItem()
-                    ) {
+        AnimatedContent(
+            targetState = entregas.isEmpty(),
+            label = "lista_transition"
+        ) { isEmpty ->
+            if (isEmpty) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(padding),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "Nenhuma entrega registrada",
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+            } else {
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(padding),
+                    contentPadding = PaddingValues(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    items(
+                        items = entregas,
+                        key = { it.id }
+                    ) { entrega ->
                         DeliveryCard(
                             entrega = entrega,
                             onClick = { onEntregaClick(entrega) }
@@ -197,15 +207,13 @@ private fun DeliveryCard(
                     AndroidView(
                         factory = { ctx ->
                             MapView(ctx).apply {
-                                setMultiTouchControls(false) // Desativa gestos para não travar o scroll da lista
+                                setMultiTouchControls(false)
                                 controller.setZoom(16.0)
                                 val geoPoint = GeoPoint(entrega.latitude, entrega.longitude)
                                 controller.setCenter(geoPoint)
 
                                 val marker = Marker(this)
                                 marker.position = geoPoint
-                                marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
-                                marker.title = "Local da Entrega"
                                 overlays.add(marker)
                             }
                         },

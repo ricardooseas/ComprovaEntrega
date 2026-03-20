@@ -70,7 +70,6 @@ fun NewDeliveryScreen(
         contract = ActivityResultContracts.RequestPermission()
     ) { isGranted ->
         if (isGranted) {
-            // Se aceitou, chama a função de abrir câmera definida abaixo
         } else {
             Toast.makeText(
                 context,
