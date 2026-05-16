@@ -19,6 +19,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import com.google.android.gms.location.LocationServices
@@ -210,22 +212,35 @@ fun NewDeliveryScreen(
                     )
                     Spacer(modifier = Modifier.height(16.dp))
 
-                    FilledTonalButton(
-                        onClick = { checkCameraPermissionAndLaunch() },
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Text(text = if (photoPathCaptured != null) "Foto capturada" else "Capturar foto")
-                    }
+                   FilledTonalButton(
+    onClick = { checkCameraPermissionAndLaunch() },
+    modifier = Modifier
+        .fillMaxWidth()
+        .semantics {
+            contentDescription = if (photoPathCaptured != null)
+                "Foto capturada com sucesso"
+            else
+                "Capturar foto do comprovante"
+        }
+) {
+    Text(text = if (photoPathCaptured != null) "Foto capturada" else "Capturar foto")
+}
 
                     Spacer(modifier = Modifier.height(12.dp))
 
                     FilledTonalButton(
-                        onClick = { locationPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION) },
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Text(text = if (locationCaptured) "Localização capturada" else "Capturar localização")
-                    }
-
+    onClick = { locationPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION) },
+    modifier = Modifier
+        .fillMaxWidth()
+        .semantics {
+            contentDescription = if (locationCaptured)
+                "Localização capturada com sucesso"
+            else
+                "Capturar localização GPS da entrega"
+        }
+) {
+    Text(text = if (locationCaptured) "Localização capturada" else "Capturar localização")
+}
                     Spacer(modifier = Modifier.height(16.dp))
 
                     // Status dinâmico
@@ -256,14 +271,18 @@ fun NewDeliveryScreen(
                 Text(text = "Salvar entrega")
             }
 
-            if (!canSave) {
-                Text(
-                    text = "* Foto, localização e dados básicos são obrigatórios.",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.error,
-                    modifier = Modifier.padding(top = 8.dp)
-                )
+        if (!canSave) {
+    Text(
+        text = "* Foto, localização e dados básicos são obrigatórios.",
+        style = MaterialTheme.typography.bodySmall,
+        color = MaterialTheme.colorScheme.error,
+        modifier = Modifier
+            .padding(top = 8.dp)
+            .semantics {
+                contentDescription = "Campos obrigatórios pendentes: preencha todos os dados, capture a foto e a localização"
             }
+    )
+}
         }
     }
 }
