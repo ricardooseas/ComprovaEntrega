@@ -28,6 +28,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import com.unifor.comprovaentrega.data.local.entity.Delivery
 import kotlinx.coroutines.launch
 import org.osmdroid.config.Configuration
@@ -96,6 +98,10 @@ fun HomeScreen(
         floatingActionButton = {
             FloatingActionButton(
                 onClick = onNovaEntregaClick,
+                modifier = Modifier.semantics {
+                        contentDescription = "Nova Entrega"
+                    },
+
                 containerColor = MaterialTheme.colorScheme.primary,
                 contentColor = MaterialTheme.colorScheme.onPrimary
             ) {
