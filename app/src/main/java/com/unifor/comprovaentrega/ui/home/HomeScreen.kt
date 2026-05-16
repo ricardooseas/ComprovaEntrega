@@ -223,7 +223,11 @@ private fun DeliveryCard(
                                 overlays.add(marker)
                             }
                         },
-                        modifier = Modifier.fillMaxSize()
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .semantics {
+                                 contentDescription = "Mapa com localização da entrega para ${entrega.destinatario}"
+                            }
                     )
                 }
             }
