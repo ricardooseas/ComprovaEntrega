@@ -50,7 +50,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.FileProvider
@@ -75,7 +74,14 @@ fun DeliveryDetailScreen(
 
     var mostrarDialogDeletar by remember { mutableStateOf(false) }
     var inputSenha by remember { mutableStateOf("") }
-    val senhaCorreta = "1234"
+    val adminHash = "03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4"
+
+    fun hashInput(input: String): String {
+        val bytes = java.security.MessageDigest
+            .getInstance("SHA-256")
+            .digest(input.toByteArray())
+        return bytes.joinToString("") { "%02x".format(it) }
+    }
     val scope = rememberCoroutineScope()
 
     val dao = AppDatabase.getDatabase(LocalContext.current).deliveryDao()
@@ -105,7 +111,7 @@ fun DeliveryDetailScreen(
             confirmButton = {
                 Button(
                     onClick = {
-                        if (inputSenha == senhaCorreta) {
+                        if (hashInput(inputSenha) == adminHash){
                             scope.launch {
                                 dao.deleteDelivery(delivery)
                                 mostrarDialogDeletar = false
@@ -194,7 +200,7 @@ fun DeliveryDetailScreen(
                     Text("Foto de Comprovação:", style = MaterialTheme.typography.titleMedium)
                     AsyncImage(
                         model = delivery.photoPath,
-                        contentDescription = "Foto da entrega",
+                        contentDescription = "Comprovante fotografico da entrega para ${delivery.destinatario}",
                         modifier = Modifier
                             .fillMaxWidth(),
                         contentScale = ContentScale.FillWidth
