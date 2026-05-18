@@ -25,6 +25,9 @@ class MainActivity : ComponentActivity() {
 
     private val db by lazy { AppDatabase.getDatabase(this) }
     private val dao by lazy { db.deliveryDao() }
+    private val repository by lazy { 
+    com.unifor.comprovaentrega.data.local.repository.DeliveryRepository(dao) 
+    }
 
     private var telaAtual by mutableStateOf<NavScreen>(NavScreen.Home)
     private var entregaSelecionada by mutableStateOf<Delivery?>(null)
@@ -35,7 +38,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
 
         setContent {
-            val entregas by dao.getAllDeliveries().collectAsState(initial = emptyList())
+            val entregas by repository.getAllDeliveries().collectAsState(initial = emptyList())
             val scope = rememberCoroutineScope()
 
             ComprovaEntregaTheme {
@@ -70,7 +73,7 @@ class MainActivity : ComponentActivity() {
                                     )
 
                                     scope.launch {
-                                        dao.insertDelivery(novaEntrega)
+                                        repository.insertDelivery(novaEntrega)
                                         telaAtual = NavScreen.Home
                                     }
                                 }
